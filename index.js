@@ -7,6 +7,7 @@ var path = require('path');
 mongoDB();
 
 app.use((req, res, next) => {
+  // res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
   res.setHeader("Access-Control-Allow-Origin", "https://listing-project-xwf6.vercel.app");
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE'); // Include OPTIONS method
   // res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS'); // Include OPTIONS method
@@ -20,12 +21,13 @@ app.use((req, res, next) => {
   //   res.sendStatus(200); // Respond with OK status for OPTIONS request
   // } else {
   //   next();
+  
   // }
 });
 
 // app.use((req, res, next) => {
 //   // res.setHeader("Access-Control-Allow-Origin","https://restroproject.onrender.com");
-//   res.setHeader("Access-Control-Allow-Origin", "http://localhost:3001");
+//   res.setHeader("Access-Control-Allow-Origin", "https://estate-tm2d.onrender.com");
 //   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
 //   res.header(
 //     'Access-Control-Allow-Headers',

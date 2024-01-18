@@ -77,28 +77,28 @@ router.post("/login", [
         res.json({ Success: false })
     }
 });
-
 router.post("/addproperty",
     [
-        body('PropertyName').isLength(),
-        body('Address').isLength({min:3}),
-        body('SaleType').isLength(),
-        body('Featured').isLength(),
-        body('Area').isNumeric(),
-        body('PropertyType').isLength(),
-        body('NeighbourHood').isLength(),
-        body('NumofBeds').isNumeric(),
-        body('NumofBathrooms').isNumeric(),
-        body('Description').isLength(),
-    ]
-    , async (req, res) => {
+        body('PropertyName').isLength({ min: 1 }),
+        body('Address').isLength({ min: 3 }),
+        body('SaleType').isLength({ min: 1 }),
+        body('Featured').isLength({ min: 1 }),
+        body('Area').isLength({ min: 1 }),
+        body('PropertyType').isLength({ min: 1 }),
+        body('NeighbourHood').isLength({ min: 1 }),
+        body('NumofBeds').isLength({ min: 1 }),
+        body('Price').isLength({ min: 1 }),
+        body('NumofBathrooms').isLength({ min: 1 }),
+        body('Description').isLength({ min: 1 }),
+    ],
+    async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
 
         try {
-            Property.create({
+            await Property.create({
                 PropertyName: req.body.PropertyName,
                 Address: req.body.Address,
                 SaleType: req.body.SaleType,
@@ -108,18 +108,18 @@ router.post("/addproperty",
                 NeighbourHood: req.body.NeighbourHood,
                 NumofBeds: req.body.NumofBeds,
                 NumofBathrooms: req.body.NumofBathrooms,
+                Price: req.body.Price,
                 Description: req.body.Description,
                 imageUrls: req.body.imageUrls,
                 coverImageUrl: req.body.coverImageUrl,
-            })
-            res.json({ 
+            });
+            res.status(201).json({
                 Success: true,
-                message: "Congratulations! Your Property has been successfully added! "
-            })
-        }
-        catch (error) {
+                message: "Congratulations! Your Property has been successfully added!"
+            });
+        } catch (error) {
             console.log(error);
-            res.json({ Success: false })
+            res.status(500).json({ Success: false, message: "Internal Server Error" });
         }
     });
 

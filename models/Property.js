@@ -15,7 +15,7 @@ const PropertySchema = new Schema({
         type: String, 
     },
     Area: { 
-        type: Number,
+        type: String,
     },
     PropertyType:{
         type: String,
@@ -24,12 +24,15 @@ const PropertySchema = new Schema({
         type: String,
     },
     NumofBeds: { 
-        type: Number,
+        type: String,
     },
     NumofBathrooms: { 
-        type: Number,
+        type: String,
     },
     Description: { 
+        type: String,
+    },
+    price: { 
         type: String,
     },
     coverImageUrl: {

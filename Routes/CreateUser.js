@@ -124,29 +124,48 @@ router.post("/addproperty",
     });
 
     // Fetch all properties
+    // router.get('/getproperties', async (req, res) => {
+    //     try {
+    //         const properties = await Property.find();
+    
+    //         // Check if all properties have Featured set to 'no'
+    //         const allFeaturedNo = properties.every(property => property.Featured === 'no');
+    
+    //         if (allFeaturedNo) {
+    //             return res.json({ message: "No featured properties available." });
+    //         }
+    
+    //         const filteredProperties = properties.filter(property => property.Featured === 'yes');
+    
+    //         const modifiedProperties = filteredProperties.map(property => ({
+    //             ...property._doc,
+    //             imageUrls: property.imageUrls.map(url => url.replace(/\\/g, '/'))
+    //         }));
+    
+    //         res.json(modifiedProperties);
+    //     } catch (error) {
+    //         res.status(500).json({ message: error.message });
+    //     }
+    // });
+
     router.get('/getproperties', async (req, res) => {
-        try {
-            const properties = await Property.find();
-    
-            // Check if all properties have Featured set to 'no'
-            const allFeaturedNo = properties.every(property => property.Featured === 'no');
-    
-            if (allFeaturedNo) {
-                return res.json({ message: "No featured properties available." });
-            }
-    
-            const filteredProperties = properties.filter(property => property.Featured === 'yes');
-    
-            const modifiedProperties = filteredProperties.map(property => ({
-                ...property._doc,
-                imageUrls: property.imageUrls.map(url => url.replace(/\\/g, '/'))
-            }));
-    
-            res.json(modifiedProperties);
-        } catch (error) {
-            res.status(500).json({ message: error.message });
-        }
-    });
+      try {
+          const properties = await Property.find();
+  
+          // res.json(properties);
+          // console.log(properties);
+          // No need to check for Featured properties, return all properties
+          const modifiedProperties = properties.map(property => ({
+              ...property._doc,
+              imageUrls: property.imageUrls.map(url => url.replace(/\\/g, '/'))
+          }));
+  
+          res.json(modifiedProperties);
+      } catch (error) {
+          res.status(500).json({ message: error.message });
+      }
+  });
+  
 
     // Inside your backend route
     // router.post('/getpropertiesbyNeighbourHood', async (req, res) => {
@@ -159,38 +178,124 @@ router.post("/addproperty",
     //     }
     //   });
 
-    router.post('/getpropertiesbyNeighbourHood', async (req, res) => {
-        try {
-          const { neighborhoods, propertyType, NumofBeds, NumofBathrooms } = req.body;
+    // router.post('/getpropertiesbyNeighbourHood', async (req, res) => {
+    //     try {
+    //       const { neighborhoods, propertyType, NumofBeds, NumofBathrooms } = req.body;
       
-          // Define a filter object based on selected property type
-          const filter = {
-            NeighbourHood: { $in: neighborhoods }
-          };
+    //       // Define a filter object based on selected property type
+    //       const filter = {
+    //         NeighbourHood: { $in: neighborhoods }
+    //       };
       
-          // Check if propertyType is selected and add it to the filter
-          if (propertyType && propertyType !== 'Select property type') {
-            filter.PropertyType = propertyType;
-          }
+    //       // Check if propertyType is selected and add it to the filter
+    //       if (propertyType && propertyType !== 'Select property type') {
+    //         filter.PropertyType = propertyType;
+    //       }
 
-          // Check for NumofBeds condition
-        if (NumofBeds && NumofBeds !== 'Select beds') {
-            const beds = parseInt(NumofBeds.split('+')[0]); // Extract the number from '+ beds'
-            filter.NumofBeds = { $gte: beds }; // Filter where NumofBeds is greater than or equal to selected value
-        }
+    //       // Check for NumofBeds condition
+    //     if (NumofBeds && NumofBeds !== 'Select beds') {
+    //         const beds = parseInt(NumofBeds.split('+')[0]); // Extract the number from '+ beds'
+    //         filter.NumofBeds = { $gte: beds }; // Filter where NumofBeds is greater than or equal to selected value
+    //     }
   
+    //     // Check for NumofBathrooms condition
+    //     if (NumofBathrooms && NumofBathrooms !== 'Select bathrooms') {
+    //         const bathrooms = parseInt(NumofBathrooms.split('+')[0]); // Extract the number from '+ bathrooms'
+    //         filter.NumofBathrooms = { $gte: bathrooms }; // Filter where NumofBathrooms is greater than or equal to selected value
+    //     }
+      
+    //       const properties = await Property.find(filter);
+    //       res.json(properties);
+    //     } catch (error) {
+    //       res.status(500).json({ message: error.message });
+    //     }
+    //   });
+
+    router.post('/getpropertiesbyNeighbourHood', async (req, res) => {
+      try {
+        const { neighborhoods, propertyType, NumofBeds, NumofBathrooms } = req.body;
+    
+        // Define a filter object based on selected property type
+        const filter = {
+          NeighbourHood: { $in: neighborhoods },
+        };
+    
+        // Check if propertyType is selected and add it to the filter
+        if (propertyType && propertyType !== 'Select property type') {
+          filter.PropertyType = propertyType;
+        }
+    
+        // Check for NumofBeds condition
+        if (NumofBeds && NumofBeds !== 'Select beds') {
+          const beds = parseInt(NumofBeds.split('+')[0]); // Extract the number from '+ beds'
+          filter.NumofBeds = { $gte: beds }; // Filter where NumofBeds is greater than or equal to selected value
+        }
+    
         // Check for NumofBathrooms condition
         if (NumofBathrooms && NumofBathrooms !== 'Select bathrooms') {
-            const bathrooms = parseInt(NumofBathrooms.split('+')[0]); // Extract the number from '+ bathrooms'
-            filter.NumofBathrooms = { $gte: bathrooms }; // Filter where NumofBathrooms is greater than or equal to selected value
+          const bathrooms = parseInt(NumofBathrooms.split('+')[0]); // Extract the number from '+ bathrooms'
+          filter.NumofBathrooms = { $gte: bathrooms }; // Filter where NumofBathrooms is greater than or equal to selected value
         }
-      
-          const properties = await Property.find(filter);
-          res.json(properties);
-        } catch (error) {
-          res.status(500).json({ message: error.message });
+    
+        const properties = await Property.find(filter);
+        res.json(properties);
+      } catch (error) {
+        res.status(500).json({ message: error.message });
+      }
+    });
+
+    router.get('/delproperty/:propertyId', async (req, res) => {
+      try {
+        const propertyId = req.params.propertyId;
+    
+        const result = await Property.findByIdAndDelete(propertyId);
+    
+        if (result) {
+          res.json({
+            success: true,
+            message: "Property deleted successfully"
+          });
+        } else {
+          res.status(404).json({
+            success: false,
+            message: "Property not found"
+          });
         }
-      });
+      } catch (error) {
+        console.error("Error deleting Property:", error);
+        res.status(500).json({
+          success: false,
+          message: "Failed to delete Property"
+        });
+      }
+    });
+
+  //   router.get('/delproperty/:propertyId', async (req, res) => {
+  //     try {
+  //         const propertyId = req.params.propertyId;
+  
+  //         const result = await Property.findByIdAndDelete(propertyId);
+  
+  //         if (result) {
+  //             res.json({
+  //                 success: true,
+  //                 message: "Property deleted successfully"
+  //             });
+  //         } else {
+  //             res.status(404).json({
+  //                 success: false,
+  //                 message: "Property not found"
+  //             });
+  //         }
+  //     } catch (error) {
+  //         console.error("Error deleting Property:", error);
+  //         res.status(500).json({
+  //             success: false,
+  //             message: "Failed to delete Property"
+  //         });
+  //     }
+  // });
+  
 
       // Endpoint to submit contact information
       router.post('/submit-contact-info', async (req, res) => {
